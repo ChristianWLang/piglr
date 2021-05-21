@@ -7,9 +7,22 @@ from piglr.error import IllegalParameterError
 
 class Game:
     def __init__(self, players: int = 2, num_dice: int = 1, dn: int = 6, target: int = 100):
+        """Initialization of `Game` object to play a game of pig.
+
+        Args:
+            players (:obj:int, optional): Number of players playing the game. Must be >= 2. Defaults to 2.
+            num_dice (:obj:int, optional): Number of dice used. Must be > 1. Defaults to 1.
+            dn (:obj:int, optional): Number of sides per die. Must be >= 2. Defaults to 6.
+            target (:obj:int, optional): Target score to win the game. Must be > 1. Defaults to 100.
+
+        Returns:
+            obs (:obj:dict): Observed state of the game.
+            winner (:obj:int): Player who won the game.
+
+        """
         for param in [players, num_dice, dn, target]:
             if not isinstance(param, int):
-                param_name = f'{param=}'.split('=')[0]
+                param_name = f'{param}='.split('=')[0]
                 raise TypeError(f'Param {param_name} must be of type int')
 
         if players < 2:
