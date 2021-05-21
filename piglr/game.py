@@ -43,10 +43,11 @@ class Game:
             piglr.error.IllegalParameterError: is raised whenever a
                 parameter is passed an illegal value. For legal values
                 see args section of init method.
+
         """
         for param in [players, num_dice, dn, target]:
             if not isinstance(param, int):
-                param_name = f'{param=}'.split('=')[0]
+                param_name = f'{param}='.split('=')[0]
                 raise TypeError(f'Param {param_name} must be of type int')
 
         if players < 2:
