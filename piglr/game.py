@@ -1,3 +1,5 @@
+"""Piglr Game module."""
+
 import random
 from typing import Union
 
@@ -6,18 +8,41 @@ from piglr.error import IllegalParameterError
 
 
 class Game:
+    """Game class used to interact with a the pig environment.
+
+    Example usage:
+    
+    >>> import json
+    >>> import random
+    >>> import piglr
+    >>> game = piglr.Game()
+    >>> obs, winner = game.reset()
+    >>> while winner is None:
+    >>>     roll = random.randint(0, 1)
+    >>>     if roll:
+    >>>         obs, winner = game.roll()
+    >>>     else:
+    >>>         obs, winner = game.bank()
+    >>> print(json.dumps(obs, indent=4))
+    >>> print(f'Winner: {winner}')
+
+    """
     def __init__(self, players: int = 2, num_dice: int = 1, dn: int = 6, target: int = 100):
-        """Initialization of `Game` object to play a game of pig.
+        """`Game` init method.
 
         Args:
-            players (:obj:int, optional): Number of players playing the game. Must be >= 2. Defaults to 2.
-            num_dice (:obj:int, optional): Number of dice used. Must be > 1. Defaults to 1.
-            dn (:obj:int, optional): Number of sides per die. Must be >= 2. Defaults to 6.
-            target (:obj:int, optional): Target score to win the game. Must be > 1. Defaults to 100.
+            players: Number of players. (Legal range 2-inf)
+            num_dice: Number of dice. (Legal range 1-inf)
+            dn: Dice sidedness (Think D&D, d6, d8, d20, etc.). (Legal
+                range 1-inf)
+            target: Target score for the game. (Legal range 1-inf)
 
-        Returns:
-            obs (:obj:dict): Observed state of the game.
-            winner (:obj:int): Player who won the game.
+        Raises:
+            TypeError: TypeError is raised whenever one of the passed
+                parameters is not of type int.
+            piglr.error.IllegalParameterError: is raised whenever a
+                parameter is passed an illegal value. For legal values
+                see args section of init method.
 
         """
         for param in [players, num_dice, dn, target]:
@@ -44,6 +69,13 @@ class Game:
 
     @property
     def state(self) -> dict:
+        """State property.
+
+        Returns:
+            Instance of :obj:`piglr.state.State` converted to a
+            dictionary.
+
+        """
         return as_dict(self._state)
 
     def _increment_turn(self, bank: bool) -> None:
@@ -64,6 +96,15 @@ class Game:
         return None
 
     def reset(self) -> Union[dict, None]:
+        """Reset method.
+
+        Resets the game state.
+
+        Returns:
+            - State property :attr:`piglr.game.Game.state`.
+            - :obj:`None`.
+
+        """
         self._state = State(
             players=self.players,
             num_dice=self.num_dice,
@@ -75,16 +116,37 @@ class Game:
         return self.state, None
 
     def roll(self) -> Union[dict, None]:
-        d = random.randint(1, self._state.dn)
-        if d == 1:
-            self._increment_turn(bank=False)
-        else:
-            self._state.rolls += 1
-            self._state.bank += d
+        """Roll dice.
+
+        Rolls dice for current player.
+
+        Returns:
+            - State property :attr:`piglr.game.Game.state`.
+            - :obj:`None`.
+
+        """
+        for _ in range(self._state.num_dice):
+            d = random.randint(1, self._state.dn)
+            if d == 1:
+                self._increment_turn(bank=False)
+                return self.state, None
+
+            else:
+                self._state.rolls += 1
+                self._state.bank += d
 
         return self.state, None
     
     def bank(self) -> Union[dict, Union[int, None]]:
+        """Scores bank.
+
+        Scores bank for current player.        
+
+        Returns:
+            - State property :attr:`piglr.game.Game.state`.
+            - :obj:`int` if the game has been won else :obj:`None`.
+
+        """
         self._increment_turn(bank=True)
 
         winner = self._check_for_winner()
