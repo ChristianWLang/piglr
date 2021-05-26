@@ -25,7 +25,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         pip install .[testing]
-        pytest tests/ --cov ctf --cov-report xml --cov-fail-under ${{ secrets.COVERAGE_THRESHOLD }}
+        pytest tests/ --cov piglr --cov-report xml --cov-fail-under ${{ secrets.COVERAGE_THRESHOLD }}
         bash <(curl -s https://codecov.io/bash)
     - name: Build and publish
       env:
