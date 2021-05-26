@@ -9,13 +9,10 @@ from version import VERSION as __version__
 with open('README.md', 'r') as f:
     long_description = f.read()
 
-with open('LICENSE', 'r') as f:
-    license = f.read()
-
 setuptools.setup(
     name='piglr',
     version=__version__,
-    author='Christian Lang',
+    author='Christian Lang, Mike Novitsky',
     author_email='me@christianlang.io',
     description='A Pig Reinforcement Learning Environment.',
     long_description=long_description,
@@ -29,7 +26,7 @@ setuptools.setup(
     },
     packages=setuptools.find_packages(),
     include_package_data=True,
-    license=license,
+    license='BSD',
     extras_require={
         'testing': ['pytest', 'pytest-cov', 'flake8'],
         'docs': ['sphinx']
